@@ -35,6 +35,7 @@ export const DUMMY_DATA = {
   description: '기념화환',
   price: 35400,
   discount_percent: 25,
+  seller: '별맛마켓',
   imageArray: [
     'https://shop-phinf.pstatic.net/20210610_27/1623250981797NY2DL_JPEG/24386761504768222_1116523598.jpg?',
     'https://shop-phinf.pstatic.net/20201211_45/1607697603608NK92l_JPEG/8833438405334514_252837192.jpg',
