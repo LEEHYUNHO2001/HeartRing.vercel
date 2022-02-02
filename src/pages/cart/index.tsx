@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { ReducerAction, useState } from 'react';
 import styled from '@emotion/styled';
 
 import Link from 'next/link';
@@ -28,10 +28,39 @@ interface CalcData {
 const Calculate = (price: number, discount_percent: number) => {
   return price - (price / 100) * discount_percent;
 };
-
+interface IDetailInfo {
+  id: number;
+  checkedItems: Array<object>;
+}
 const Cart = ({ DATAS }: propsData) => {
   const FAKE_DATA = [...DATAS, ...DATAS, ...DATAS, ...DATAS];
   const [totalPrice, setTotalPrice] = useState(0);
+  const [isCheckedAll, setIsCheckedAll] = useState<boolean>(false);
+  const [checkedItems, setCheckedItems] = useState<IDetailInfo[]>([]);
+
+  // const handleAllCheckd = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setIsCheckedAll(!isCheckedAll);
+  // };
+  const handleChecked = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.checked) {
+      setIsCheckedAll(false);
+    }
+  };
+  const allAgreeHandler = (checked: boolean, id: number) => {
+    setIsCheckedAll(!isCheckedAll);
+    if (checked) {
+      setCheckedItems([...checkedItems, id]);
+    } else {
+      setCheckedItems([]);
+    }
+  };
+  const agreeHandler = (checked: boolean, id: number) => {
+    if (checked) {
+      setCheckedItems([...checkedItems, id]);
+    } else if (!checked && checkedItems.includes(id)) {
+      setCheckedItems(checkedItems.filter((el) => el !== id));
+    }
+  };
   return (
     <Container>
       <CartHeader>장바구니</CartHeader>
@@ -53,7 +82,12 @@ const Cart = ({ DATAS }: propsData) => {
         <thead>
           <CartTabelRow>
             <th>
-              <input type="checkbox" id={'SelectAll'} />
+              <input
+                type="checkbox"
+                id={'SelectAll'}
+                checked={isCheckedAll}
+                onChange={(e) => allAgreeHandler(e.target.checked)}
+              />
               <label htmlFor={'SelectAll'} />
             </th>
             <th>
@@ -70,7 +104,11 @@ const Cart = ({ DATAS }: propsData) => {
               return (
                 <CartTabelRow key={idx}>
                   <CartTabelCol>
-                    <input type="checkbox" id={String(idx)} />
+                    <input
+                      type="checkbox"
+                      id={String(idx)}
+                      onChange={(e) => handleChecked(e)}
+                    />
                     <label htmlFor={String(idx)} />
                   </CartTabelCol>
                   <CartTabelCol>
