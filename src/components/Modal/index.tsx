@@ -5,6 +5,7 @@ interface ModalProps {
   onClose: Function;
   width: number;
   closable: boolean;
+  submitEvent: Function;
   maskClosable: boolean;
   visible: boolean;
   children: ReactNode;
@@ -26,6 +27,7 @@ const Modal = ({
   ModalTitle,
   width,
   visible,
+  submitEvent,
   closable,
   maskClosable,
   onClose,
@@ -43,7 +45,7 @@ const Modal = ({
     }
   };
   const Submit = (e: React.SyntheticEvent<EventTarget>) => {
-    alert('저장하겠습니까?');
+    submitEvent();
     if (onClose) {
       onClose(e);
     }

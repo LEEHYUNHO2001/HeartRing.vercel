@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React, { ReducerAction, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { DUMMY_DATA } from '../../constants/index';
 import Link from 'next/link';
-
+import DATA from '../../data/DUMMY_DATA.json';
 interface propsData {
-  datas: [
+  DATAS: [
     {
       src: string;
       seller: string;
@@ -14,6 +13,9 @@ interface propsData {
       sale: number;
       content: string;
       orderNum: number;
+      imageArray: Array<string>;
+      discount_percent: number;
+      description: string;
     }
   ];
 }
@@ -26,15 +28,39 @@ interface CalcData {
 const Calculate = (price: number, discount_percent: number) => {
   return price - (price / 100) * discount_percent;
 };
-
-const Cart = ({ datas }: propsData) => {
-  const FAKE_DATA = [
-    ...[DUMMY_DATA],
-    ...[DUMMY_DATA],
-    ...[DUMMY_DATA],
-    ...[DUMMY_DATA],
-  ];
+interface IDetailInfo {
+  id: number;
+  checkedItems: Array<object>;
+}
+const Cart = ({ DATAS }: propsData) => {
+  const FAKE_DATA = [...DATAS, ...DATAS, ...DATAS, ...DATAS];
   const [totalPrice, setTotalPrice] = useState(0);
+  const [isCheckedAll, setIsCheckedAll] = useState<boolean>(false);
+  const [checkedItems, setCheckedItems] = useState<IDetailInfo[]>([]);
+
+  // const handleAllCheckd = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setIsCheckedAll(!isCheckedAll);
+  // };
+  const handleChecked = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.checked) {
+      setIsCheckedAll(false);
+    }
+  };
+  const allAgreeHandler = (checked: boolean, id: number) => {
+    setIsCheckedAll(!isCheckedAll);
+    if (checked) {
+      setCheckedItems([...checkedItems, id]);
+    } else {
+      setCheckedItems([]);
+    }
+  };
+  const agreeHandler = (checked: boolean, id: number) => {
+    if (checked) {
+      setCheckedItems([...checkedItems, id]);
+    } else if (!checked && checkedItems.includes(id)) {
+      setCheckedItems(checkedItems.filter((el) => el !== id));
+    }
+  };
   return (
     <Container>
       <CartHeader>장바구니</CartHeader>
@@ -52,11 +78,16 @@ const Cart = ({ datas }: propsData) => {
           있으니 주문 시 꼭 다시 확인해 주시기 바랍니다.
         </CardInfoList>
       </CartInfo>
-      <CartContainer>
+      <CartTabel>
         <thead>
-          <tr>
+          <CartTabelRow>
             <th>
-              <input type="checkbox" id={'SelectAll'} />
+              <input
+                type="checkbox"
+                id={'SelectAll'}
+                checked={isCheckedAll}
+                onChange={(e) => allAgreeHandler(e.target.checked)}
+              />
               <label htmlFor={'SelectAll'} />
             </th>
             <th>
@@ -65,26 +96,28 @@ const Cart = ({ datas }: propsData) => {
             <th>옵션</th>
             <th>상품금액</th>
             <th>배송비</th>
-          </tr>
+          </CartTabelRow>
         </thead>
         <tbody>
           {FAKE_DATA &&
             FAKE_DATA.map((data, idx) => {
               return (
-                <CartList key={idx}>
-                  <td>
-                    <input type="checkbox" id={String(idx)} />
+                <CartTabelRow key={idx}>
+                  <CartTabelCol>
+                    <input
+                      type="checkbox"
+                      id={String(idx)}
+                      onChange={(e) => handleChecked(e)}
+                    />
                     <label htmlFor={String(idx)} />
-                  </td>
-                  <td>
+                  </CartTabelCol>
+                  <CartTabelCol>
                     <img src={data.imageArray[0]} />
                     <div>
                       <p>
                         <Link href="#">{data.seller}</Link>
                       </p>
-                      <p>
-                        <Link href="/details">{data.title}</Link>
-                      </p>
+                      <p>{data.title}</p>
                       <p>
                         <span>
                           {Calculate(
@@ -96,27 +129,31 @@ const Cart = ({ datas }: propsData) => {
                         <span>{data.price.toLocaleString()}원</span>
                       </p>
                     </div>
-                  </td>
-                  <AlginCenterTd>
-                    <span>
-                      {data.description}
-                      {idx + 1}개
-                    </span>
-                  </AlginCenterTd>
-                  <AlginCenterTd>
-                    {(
-                      Calculate(data.price, data.discount_percent) *
-                      (idx + 1)
-                    ).toLocaleString()}
-                    원
-                  </AlginCenterTd>
-                  <td>
+                  </CartTabelCol>
+                  <CartTabelCol>
+                    <AlginCenterTd>
+                      <span>
+                        {data.description}
+                        {idx + 1}개
+                      </span>
+                    </AlginCenterTd>
+                  </CartTabelCol>
+                  <CartTabelCol>
+                    <AlginCenterTd>
+                      {(
+                        Calculate(data.price, data.discount_percent) *
+                        (idx + 1)
+                      ).toLocaleString()}
+                      원
+                    </AlginCenterTd>
+                  </CartTabelCol>
+                  <CartTabelCol>
                     <SmallText>기본배송비 2,500원</SmallText>
-                  </td>
-                </CartList>
+                  </CartTabelCol>
+                </CartTabelRow>
               );
             })}
-          <tr>
+          <CartTabelRow>
             <td>
               <input type={'checkbox'} id={'SelectItem'} />
               <label htmlFor={'SelectItem'} />
@@ -125,25 +162,29 @@ const Cart = ({ datas }: propsData) => {
               <button>선택상품 삭제</button>
               <button>선택상품 찜</button>
             </td>
-          </tr>
-          <tr>
+          </CartTabelRow>
+          <CartTabelRow>
             <td></td>
-            <AlginCenterTd>
-              <p>
-                <span>총 상품금액</span>
-                <span>배송비</span>
-                <span>할인예상금액</span>
-              </p>
-            </AlginCenterTd>
-            <AlginCenterTd>
-              총 주문금액 &nbsp;
-              <StyleText color="#a26f59">
-                {totalPrice.toLocaleString()}원
-              </StyleText>
-            </AlginCenterTd>
-          </tr>
+            <CartTabelCol>
+              <AlginCenterTd>
+                <p>
+                  <span>총 상품금액</span>
+                  <span>배송비</span>
+                  <span>할인예상금액</span>
+                </p>
+              </AlginCenterTd>
+            </CartTabelCol>
+            <CartTabelCol>
+              <AlginCenterTd>
+                총 주문금액 &nbsp;
+                <StyleText color="#a26f59">
+                  {totalPrice.toLocaleString()}원
+                </StyleText>
+              </AlginCenterTd>
+            </CartTabelCol>
+          </CartTabelRow>
         </tbody>
-      </CartContainer>
+      </CartTabel>
       <ButtonContainer>
         <Button>쇼핑계속하기</Button>
         <Button color={'#a26f59'}>주문하기</Button>
@@ -160,6 +201,21 @@ const Cart = ({ datas }: propsData) => {
     </Container>
   );
 };
+
+export async function getServerSideProps({ context }: any) {
+  // const res = await fetch(`https://.../data`);
+  const DATAS = await DATA;
+
+  if (!DATAS) {
+    return {
+      notFound: true,
+    };
+  } else {
+    return {
+      props: { DATAS }, // will be passed to the page component as props
+    };
+  }
+}
 
 export default Cart;
 const Container = styled.section`
@@ -184,7 +240,7 @@ const CardInfoList = styled.li`
   font-size: 14px;
   line-height: 1.6;
 `;
-const CartContainer = styled.table`
+const CartTabel = styled.table`
   width: 100%;
   margin-top: 20px;
   border-top: 2px solid black;
@@ -262,8 +318,10 @@ const CartContainer = styled.table`
     }
   }
 `;
-const CartList = styled.tr``;
-const AlginCenterTd = styled.td`
+('');
+const CartTabelCol = styled.td``;
+const CartTabelRow = styled.tr``;
+const AlginCenterTd = styled.span`
   margin: auto;
   text-align: center;
 `;

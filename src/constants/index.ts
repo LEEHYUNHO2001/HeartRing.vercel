@@ -7,23 +7,28 @@ export const MEDIA_QUERY_END_POINT = {
   LARGE: '2560px',
 };
 
-// export const ROUTES = [
-//   {
-//     ID: 0,
-//     PATH: "/",
-//     LABEL: "Home",
-//   },
-//   {
-//     ID: 1,
-//     PATH: "/recent",
-//     LABEL: "Recent",
-//   },
-//   {
-//     ID: 2,
-//     PATH: "/search",
-//     LABEL: "Search",
-//   },
-// ];
+export const ROUTES = [
+  {
+    ID: 0,
+    PATH: '/',
+    LABEL: 'Home',
+  },
+  {
+    ID: 1,
+    PATH: '/details',
+    LABEL: 'DETAIL',
+  },
+  {
+    ID: 2,
+    PATH: '/cart',
+    LABEL: 'CART',
+  },
+  {
+    ID: 3,
+    PATH: '/wish',
+    LABEL: 'WISHLIST',
+  },
+];
 
 // CSS
 // export const PALLETS = {

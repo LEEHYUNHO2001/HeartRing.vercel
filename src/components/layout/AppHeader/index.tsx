@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import styled from '@emotion/styled';
 import Image from 'next/image';
 import Modal from '../../Modal';
@@ -7,7 +8,7 @@ import AppFooter from '../AppFooter';
 import CateGory from './CateGory';
 // import Search from './Search'
 const AppHeaer: React.FC = ({ children }) => {
-  const [isLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   const router = useRouter();
 
@@ -24,9 +25,17 @@ const AppHeaer: React.FC = ({ children }) => {
         {isLoggedIn ? (
           <AppHeaderMenu>
             <AppHeaderMenuList>마이페이지</AppHeaderMenuList>
+            <AppHeaderMenuList>
+              <Link href="/cart">장바구니</Link>
+            </AppHeaderMenuList>
+            <AppHeaderMenuList>
+              <Link href="/wish">위시리스트</Link>
+            </AppHeaderMenuList>
             <AppHeaderMenuList>주문배송조회</AppHeaderMenuList>
             <AppHeaderMenuList>고객센터</AppHeaderMenuList>
-            <AppHeaderMenuList>로그아웃</AppHeaderMenuList>
+            <AppHeaderMenuList onClick={() => setIsLoggedIn(!isLoggedIn)}>
+              로그아웃
+            </AppHeaderMenuList>
           </AppHeaderMenu>
         ) : (
           <AppHeaderMenu>
@@ -39,6 +48,7 @@ const AppHeaer: React.FC = ({ children }) => {
                 closable={true}
                 maskClosable={true}
                 onClose={closeModal}
+                submitEvent={() => setIsLoggedIn(true)}
               >
                 dd
               </Modal>
@@ -49,9 +59,8 @@ const AppHeaer: React.FC = ({ children }) => {
       <AppHeaerContainer>
         <AppHeaderMain>
           <AppHeaderMainWrapper>
-            <span onClick={() => router.push('')}>메인화면</span>
+            <Link href="/">메인화면</Link>
             <span>Heart Ring</span>
-            {/* <Search/> */}
           </AppHeaderMainWrapper>
         </AppHeaderMain>
         <CateGory />
@@ -66,8 +75,8 @@ export default AppHeaer;
 const Container = styled.div``;
 
 const Main = styled.main`
-  height: 100vh;
-  padding: 0 30px;
+  height: 100%;
+  padding: 50px 30px;
 `;
 
 const AppHeaerContainer = styled.div`
