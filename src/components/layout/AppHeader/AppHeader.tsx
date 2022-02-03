@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import styled from '@emotion/styled';
-import Image from 'next/image';
 import Modal from '../../Modal';
 import AppFooter from '../AppFooter';
-import CateGory from './CateGory';
-// import Search from './Search'
+import Category from './Category/Category';
+import { Logined } from './AppHeaderData';
+
 const AppHeaer: React.FC = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(true);
 
@@ -21,18 +21,17 @@ const AppHeaer: React.FC = ({ children }) => {
   };
   return (
     <Container>
-      <AppHeaderMenuWrapper>
+      <AppHeaderContainer>
         {isLoggedIn ? (
           <AppHeaderMenu>
-            <AppHeaderMenuList>마이페이지</AppHeaderMenuList>
-            <AppHeaderMenuList>
-              <Link href="/cart">장바구니</Link>
-            </AppHeaderMenuList>
-            <AppHeaderMenuList>
-              <Link href="/wish">위시리스트</Link>
-            </AppHeaderMenuList>
-            <AppHeaderMenuList>주문배송조회</AppHeaderMenuList>
-            <AppHeaderMenuList>고객센터</AppHeaderMenuList>
+            {Logined.map((data) => {
+              const { name, path } = data;
+              return (
+                <AppHeaderMenuList key={`AppHeaderMenuList-${name}`}>
+                  <Link href={path}>{name}</Link>
+                </AppHeaderMenuList>
+              );
+            })}
             <AppHeaderMenuList onClick={() => setIsLoggedIn(!isLoggedIn)}>
               로그아웃
             </AppHeaderMenuList>
@@ -55,16 +54,17 @@ const AppHeaer: React.FC = ({ children }) => {
             )}
           </AppHeaderMenu>
         )}
-      </AppHeaderMenuWrapper>
-      <AppHeaerContainer>
-        <AppHeaderMain>
-          <AppHeaderMainWrapper>
-            <Link href="/">메인화면</Link>
-            <span>Heart Ring</span>
-          </AppHeaderMainWrapper>
-        </AppHeaderMain>
-        <CateGory />
-      </AppHeaerContainer>
+      </AppHeaderContainer>
+      <CategoryContainer>
+        <ImgContainer>
+          <Link href="/">
+            <a>
+              <img src="./images/heartring.jpg" alt="" />
+            </a>
+          </Link>
+        </ImgContainer>
+        <Category />
+      </CategoryContainer>
       <Main>{children}</Main>
       <AppFooter />
     </Container>
@@ -72,6 +72,7 @@ const AppHeaer: React.FC = ({ children }) => {
 };
 
 export default AppHeaer;
+
 const Container = styled.div``;
 
 const Main = styled.main`
@@ -79,10 +80,11 @@ const Main = styled.main`
   padding: 50px 30px;
 `;
 
-const AppHeaerContainer = styled.div`
+const CategoryContainer = styled.div`
+  margin-top: 50px;
   width: 100%;
 `;
-const AppHeaderMenuWrapper = styled.div`
+const AppHeaderContainer = styled.div`
   position: -webkit-sticky;
   background-color: white;
   box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
@@ -113,16 +115,7 @@ const SignInButton = styled.button`
   color: rgba(0, 0, 0, 0.5);
   border: none;
 `;
-const AppHeaderMain = styled.div`
-  margin: auto;
-  padding: 0 10%;
-`;
-const AppHeaderMainWrapper = styled.div`
-  height: 2vh;
-  margin: 20px 0 0 0;
+const ImgContainer = styled.div`
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  flex-grow: 1;
-  justify-content: space-between;
+  justify-content: center;
 `;
