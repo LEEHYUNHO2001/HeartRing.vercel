@@ -46,21 +46,6 @@ const Cart = ({ DATAS }: propsData) => {
       setIsCheckedAll(false);
     }
   };
-  const allAgreeHandler = (checked: boolean, id: number) => {
-    setIsCheckedAll(!isCheckedAll);
-    if (checked) {
-      setCheckedItems([...checkedItems, id]);
-    } else {
-      setCheckedItems([]);
-    }
-  };
-  const agreeHandler = (checked: boolean, id: number) => {
-    if (checked) {
-      setCheckedItems([...checkedItems, id]);
-    } else if (!checked && checkedItems.includes(id)) {
-      setCheckedItems(checkedItems.filter((el) => el !== id));
-    }
-  };
   return (
     <Container>
       <CartHeader>장바구니</CartHeader>
@@ -82,12 +67,7 @@ const Cart = ({ DATAS }: propsData) => {
         <thead>
           <CartTabelRow>
             <th>
-              <input
-                type="checkbox"
-                id={'SelectAll'}
-                checked={isCheckedAll}
-                onChange={(e) => allAgreeHandler(e.target.checked)}
-              />
+              <input type="checkbox" id={'SelectAll'} />
               <label htmlFor={'SelectAll'} />
             </th>
             <th>
@@ -202,7 +182,7 @@ const Cart = ({ DATAS }: propsData) => {
   );
 };
 
-export async function getServerSideProps({ context }: any) {
+export async function getStaticProps({ context }: any) {
   // const res = await fetch(`https://.../data`);
   const DATAS = await DATA;
 
